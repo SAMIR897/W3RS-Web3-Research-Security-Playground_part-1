@@ -1,0 +1,264 @@
+/* ==========================================================================
+   W3RS Retro Pixel Boss Battle Theme (HTB-Inspired)
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #242c26;
+    color: #e0eedf;
+    font-family: 'Courier New', Courier, monospace, 'Press Start 2P', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Outer Arcade Enclosure */
+.arcade-cabinet {
+    background-color: #445949;
+    border: 4px solid #28372c;
+    border-radius: 8px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    width: 860px;
+    max-width: 100%;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Header */
+.game-header {
+    text-align: center;
+}
+
+.game-title {
+    font-size: 24px;
+    letter-spacing: 2px;
+    color: #ffffff;
+    text-shadow: 2px 2px 0px #1a231c;
+    margin-bottom: 6px;
+    font-weight: 900;
+}
+
+.game-subtitle {
+    font-size: 13px;
+    color: #c0d8bf;
+    letter-spacing: 1px;
+}
+
+/* Screen Frame */
+.screen-frame {
+    position: relative;
+    background-color: #1a221c;
+    border: 3px solid #2a382e;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8);
+}
+
+canvas#gameCanvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* Connection Status Overlay */
+.status-overlay {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    background: rgba(18, 25, 20, 0.85);
+    border: 1px solid #3d5242;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #b5d5b3;
+    pointer-events: none;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #888888;
+}
+
+.status-dot.online {
+    background-color: #4ade80;
+    box-shadow: 0 0 6px #4ade80;
+}
+
+.status-dot.offline {
+    background-color: #f87171;
+}
+
+/* Victory Banner Overlay */
+.banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(12, 18, 14, 0.88);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+    z-index: 10;
+}
+
+.banner-overlay.hidden {
+    display: none;
+}
+
+.banner-overlay h2 {
+    font-size: 28px;
+    color: #4ade80;
+    text-shadow: 2px 2px 0px #0c140e;
+    letter-spacing: 2px;
+}
+
+.banner-overlay p {
+    font-size: 13px;
+    color: #fbbf24;
+}
+
+/* Boss Health Bar (HUD) */
+.hud-container {
+    padding: 0 4px;
+}
+
+.health-bar-wrapper {
+    position: relative;
+    background-color: #172019;
+    border: 3px solid #28372c;
+    border-radius: 4px;
+    height: 28px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.health-bar-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #dc2626 0%, #ef4444 60%, #f87171 100%);
+    transition: width 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.health-bar-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px #000000;
+}
+
+/* Controls Panel */
+.controls-panel {
+    display: flex;
+    gap: 12px;
+    padding: 0 4px;
+}
+
+.btn {
+    flex: 1;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 0 #1b251d;
+    transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+.btn:hover {
+    filter: brightness(1.1);
+}
+
+.btn:active {
+    transform: translateY(3px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 #1b251d;
+}
+
+.btn-secondary {
+    background-color: #35473a;
+    color: #c9dec8;
+    max-width: 140px;
+}
+
+.btn-warning {
+    background-color: #b45309;
+    color: #fef3c7;
+}
+
+.btn-primary {
+    background-color: #84cc16;
+    color: #142a03;
+}
+
+/* Terminal Log Console */
+.terminal-log {
+    background-color: #121814;
+    border: 2px solid #263329;
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 12px;
+}
+
+.terminal-header {
+    display: flex;
+    justify-content: space-between;
+    color: #82a880;
+    border-bottom: 1px solid #233026;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+    font-size: 11px;
+}
+
+.terminal-body {
+    max-height: 90px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.log-line {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.log-line.system {
+    color: #94a3b8;
+}
+
+.log-line.exploit {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+.log-line.fail {
+    color: #f87171;
+}
+
+.log-line.warn {
+    color: #fbbf24;
+}
