@@ -1,0 +1,17 @@
+# Rust
+target/
+**/*.rs.bk
+Cargo.lock
+
+# Large raw assets
+cyberpunk_upscaled_4x.png
+
+# Sandbox Runtime Files
+logs/
+.pids/
+.solana_ledger/
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
