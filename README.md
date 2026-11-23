@@ -29,7 +29,7 @@
 - [What Is W3RS](#what-is-w3rs)
 - [Architecture Overview](#architecture-overview)
 - [System Requirements](#system-requirements)
-- [Prerequisites](#prerequisites)
+- [Prerequisites & Toolchain Matrix](#prerequisites--toolchain-matrix)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Project Structure](#project-structure)
@@ -89,18 +89,18 @@ Instead of reading about vulnerabilities in documentation, you **deploy intentio
 │        ┌───────────────┼───────────────┐                            │
 │        │                               │                            │
 │  ┌─────▼─────┐                 ┌───────▼────────┐                   │
-│  │  core/    │                 │    game/        │                   │
-│  │  Rust CLI │                 │  Browser Engine │                   │
-│  │  (w3rs)   │                 │  (Canvas/WebGL) │                   │
-│  │           │                 │                 │                   │
-│  │  • status │  chain-bridge   │  • Boss battles │                   │
-│  │  • list   │◄───────────────►│  • HP = balance │                   │
-│  │  • start  │   (JSON-RPC)    │  • Live events  │                   │
-│  │  • check  │                 │  • Pixel-art    │                   │
-│  └───────────┘                 └─────────────────┘                   │
+│  │  core/    │                 │    game/       │                   │
+│  │  Rust CLI │                 │  Browser Engine│                   │
+│  │  (w3rs)   │                 │  (Canvas/WebGL)│                   │
+│  │           │                 │                │                   │
+│  │  • status │  chain-bridge   │  • Boss battles│                   │
+│  │  • list   │◄───────────────►│  • HP = balance│                   │
+│  │  • start  │   (JSON-RPC)    │  • Live events │                   │
+│  │  • check  │                 │  • Pixel-art   │                   │
+│  └───────────┘                 └────────────────┘                   │
 │                                                                     │
 │   ┌───────────────────────────────────────────────────────┐         │
-│   │                     missions/                          │         │
+│   │                     missions/                         │         │
 │   │   01_evm_reentrancy/      EtherVault.sol              │         │
 │   │   02_solana_signer_bypass/ lib.rs (Anchor)            │         │
 │   │   03_cross_chain_bridge/  Bridge.sol + BridgeMinter   │         │
@@ -129,11 +129,61 @@ Instead of reading about vulnerabilities in documentation, you **deploy intentio
 
 ---
 
-## Prerequisites
+## Prerequisites & Toolchain Matrix
+
+Before cloning the repository, ensure your environment meets the toolchain specifications below. W3RS is designed to be **100% native** — all node processes and compilers execute directly on your host machine without container overhead (no Docker required).
+
+### Toolchain Specification Matrix
+
+| Ecosystem / Layer | Component | Minimum Version | Recommended | Verification Command | Purpose in W3RS |
+|:---|:---|:---|:---|:---|:---|
+| **Core CLI Engine** | **Rust & Cargo** | `1.75.0` (edition 2021) | `1.80.0+` | `rustc --version` | Compiles the `w3rs` orchestrator CLI and Anchor programs |
+| **EVM Ecosystem** | **Foundry (`anvil`)** | `nightly` (2024+) | Latest stable | `anvil --version` | Local Ethereum node running on `127.0.0.1:8545` |
+| **EVM Ecosystem** | **Foundry (`forge`)** | `nightly` (2024+) | Latest stable | `forge --version` | Compiles, tests, and deploys Solidity exploit contracts |
+| **EVM Ecosystem** | **Foundry (`cast`)** | `nightly` (2024+) | Latest stable | `cast --version` | Sends raw RPC transactions, queries balances, triggers exploits |
+| **SVM Ecosystem** | **Solana Tool Suite** | `v1.18.0` | `v1.18.x` / `v2.0+` | `solana --version` | Manages local keypairs, airdrops, and program accounts |
+| **SVM Ecosystem** | **`solana-test-validator`** | `v1.18.0` | `v1.18.x` / `v2.0+` | `solana-test-validator -V` | Local SVM validator running on `127.0.0.1:8899` |
+| **SVM Framework** | **Anchor (`anchor-cli`)** | `v0.30.0` | `v0.30.1+` | `anchor --version` | Builds and deploys Anchor-based Solana challenge programs |
+| **Game Visualizer** | **Node.js or Python 3** | Node `18+` / Python `3.8+` | Node `20+ LTS` | `node -v` / `python3 -V` | *(Optional)* Runs local static HTTP server for browser arcade UI |
+
+---
+
+### Parallel Ecosystem Breakdown
+
+Below is a parallel summary of the toolchains grouped by playground subsystem:
+
+- 🔷 **Ethereum (EVM) Toolchain**
+  - **Local Node:** Foundry `anvil` (Port: `8545`, Chain ID: `31337`)
+  - **Contract Language:** Solidity (`^0.8.20`)
+  - **Build & Deploy:** Foundry `forge`
+  - **CLI Interaction:** Foundry `cast`
+  - **Required Version:** Foundry nightly / 2024+
+
+- 🟣 **Solana (SVM) Toolchain**
+  - **Local Node:** `solana-test-validator` (RPC Port: `8899`, WebSocket: `8900`)
+  - **Contract Language:** Rust (`2021` edition) with Anchor framework
+  - **Build & Deploy:** Anchor (`anchor build` / `anchor deploy`)
+  - **Account & Keypair Management:** Solana CLI (`solana-keygen`, `solana`)
+  - **Required Version:** Solana CLI `1.18+` / Anchor `0.30+`
+
+- 🦀 **Core Orchestrator Toolchain**
+  - **Language & Runtime:** Rust `1.75.0+` / Cargo
+  - **Core Libraries:** Tokio async runtime (`1.38`), Reqwest JSON-RPC (`0.12`), Clap CLI (`4.5`)
+  - **Sandbox Supervisor:** Bash (`run.sh`) using native background daemons (`nohup`, `lsof`, `pkill`)
+  - **Connectivity:** 100% Offline via loopback IP (`127.0.0.1`)
+
+- 🎮 **Game Engine & Visualizer (Optional)**
+  - **Runtime:** Any modern browser supporting HTML5 Canvas (Chrome, Safari, Firefox, Arc, Brave)
+  - **Graphics Engine:** Custom 60 FPS Canvas 2D engine (`game/engine.js`) + Three.js for retro 3D
+  - **Local Dev Server:** `npx serve .` or `python3 -m http.server` *(or simply double-click `game/index.html`)*
+
+---
+
+### Step-by-Step Installation Guide
 
 Install the following toolchains **before** cloning the repository. All tools are free and open-source.
 
-### 1. Rust & Cargo
+#### 1. Rust & Cargo
 
 The CLI orchestrator (`core/`) is written in Rust.
 
@@ -148,7 +198,7 @@ cargo --version
 
 > Minimum supported Rust version: **1.75.0** (edition 2021).
 
-### 2. Foundry (Anvil, Forge, Cast)
+#### 2. Foundry (Anvil, Forge, Cast)
 
 Foundry provides the local EVM node and Solidity development tools.
 
@@ -169,7 +219,7 @@ cast --version      # CLI for contract interaction
 | `forge` | Compiles and deploys Solidity mission contracts |
 | `cast` | Sends transactions and reads contract state from terminal |
 
-### 3. Solana CLI & Test Validator
+#### 3. Solana CLI & Test Validator
 
 Required for SVM (Solana) missions.
 
@@ -185,7 +235,7 @@ solana --version                  # CLI tools
 solana-test-validator --version   # Local Solana node
 ```
 
-### 4. Anchor Framework
+#### 4. Anchor Framework
 
 Required for building and deploying Solana/Anchor program missions.
 
@@ -199,7 +249,7 @@ avm use latest
 anchor --version    # Expected: 0.30.0 or later
 ```
 
-### 5. Optional: Node.js
+#### 5. Optional: Node.js
 
 Not required for core functionality. Only needed if you want to run a local dev server for the game engine with hot-reload.
 
