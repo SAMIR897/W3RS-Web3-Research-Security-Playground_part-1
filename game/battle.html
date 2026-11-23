@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W3RS: Boss Battle Playground</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="arcade-cabinet">
+        <!-- Header -->
+        <header class="game-header">
+            <h1 class="game-title">💣 Distract and Destroy 💥</h1>
+            <p class="game-subtitle" id="mission-subtitle">It's time for the boss battle!</p>
+        </header>
+
+        <!-- Main Screen Frame -->
+        <div class="screen-frame">
+            <canvas id="gameCanvas" width="800" height="420"></canvas>
+            
+            <!-- Connection Status Badge (Graceful Offline Guard) -->
+            <div class="status-overlay" id="statusOverlay">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Checking Node...</span>
+            </div>
+
+            <!-- Victory / Defeat Overlay -->
+            <div class="banner-overlay hidden" id="bannerOverlay">
+                <h2 id="bannerTitle">MISSION ACCOMPLISHED!</h2>
+                <p id="bannerSubtitle">Flag Captured: FLAG{w3rs_exploit_verified}</p>
+            </div>
+        </div>
+
+        <!-- Boss Health Bar -->
+        <div class="hud-container">
+            <div class="health-bar-wrapper">
+                <div class="health-bar-fill" id="healthBarFill"></div>
+                <div class="health-bar-text" id="healthBarText">1000 / 1000 HP</div>
+            </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="controls-panel">
+            <button class="btn btn-secondary" id="btnRestart">Restart</button>
+            <button class="btn btn-warning" id="btnDirectAttack">Direct Attack (EOA)</button>
+            <button class="btn btn-primary" id="btnExploit">Trigger Exploit (Contract)</button>
+        </div>
+
+        <!-- Battle & Blockchain Event Log -->
+        <div class="terminal-log">
+            <div class="terminal-header">
+                <span>> BATTLE & BLOCKCHAIN LOG</span>
+                <span id="blockHeight">[Block: Standby]</span>
+            </div>
+            <div class="terminal-body" id="logBody">
+                <div class="log-line system">[SYSTEM] w3rs Game Engine Initialized. Ready for battle.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Scripts -->
+    <script src="chain-bridge.js"></script>
+    <script src="engine.js"></script>
+</body>
+</html>
