@@ -68,44 +68,44 @@ Instead of reading about vulnerabilities in documentation, you **deploy intentio
 ## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        W3RS Architecture                            │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│   ┌───────────────────┐           ┌───────────────────┐             │
-│   │   Foundry Anvil   │           │  solana-test-     │             │
-│   │   (EVM Node)      │           │  validator (SVM)  │             │
-│   │   Port: 8545      │           │  Port: 8899       │             │
-│   └────────┬──────────┘           └────────┬──────────┘             │
-│            │       JSON-RPC                │                        │
-│            └───────────┬───────────────────┘                        │
-│                        │                                            │
-│            ┌───────────▼───────────┐                                │
-│            │   run.sh              │                                │
-│            │   Sandbox Manager     │                                │
-│            │   (start/stop/reset)  │                                │
-│            └───────────┬───────────┘                                │
-│                        │                                            │
-│        ┌───────────────┼───────────────┐                            │
-│        │                               │                            │
-│  ┌─────▼─────┐                 ┌───────▼────────┐                   │
-│  │  core/    │                 │    game/       │                   │
-│  │  Rust CLI │                 │  Browser Engine│                   │
-│  │  (w3rs)   │                 │  (Canvas/WebGL)│                   │
-│  │           │                 │                │                   │
-│  │  • status │  chain-bridge   │  • Boss battles│                   │
-│  │  • list   │◄───────────────►│  • HP = balance│                   │
-│  │  • start  │   (JSON-RPC)    │  • Live events │                   │
-│  │  • check  │                 │  • Pixel-art   │                   │
-│  └───────────┘                 └────────────────┘                   │
-│                                                                     │
-│   ┌───────────────────────────────────────────────────────┐         │
-│   │                     missions/                         │         │
-│   │   01_evm_reentrancy/      EtherVault.sol              │         │
-│   │   02_solana_signer_bypass/ lib.rs (Anchor)            │         │
-│   │   03_cross_chain_bridge/  Bridge.sol + BridgeMinter   │         │
-│   └───────────────────────────────────────────────────────┘         │
-└─────────────────────────────────────────────────────────────────────┘
+        ┌─────────────────────────────────────────────────────────────────────┐
+        │                        W3RS Architecture                            │
+        ├─────────────────────────────────────────────────────────────────────┤
+        │                                                                     │
+        │   ┌───────────────────┐           ┌───────────────────┐             │
+        │   │   Foundry Anvil   │           │  solana-test-     │             │
+        │   │   (EVM Node)      │           │  validator (SVM)  │             │
+        │   │   Port: 8545      │           │  Port: 8899       │             │
+        │   └────────┬──────────┘           └────────┬──────────┘             │
+        │            │       JSON-RPC                │                        │
+        │            └───────────┬───────────────────┘                        │
+        │                        │                                            │
+        │            ┌───────────▼───────────┐                                │
+        │            │   run.sh              │                                │
+        │            │   Sandbox Manager     │                                │
+        │            │   (start/stop/reset)  │                                │
+        │            └───────────┬───────────┘                                │
+        │                        │                                            │
+        │        ┌───────────────┼───────────────┐                            │
+        │        │                               │                            │
+        │  ┌─────▼─────┐                 ┌───────▼────────┐                   │
+        │  │  core/    │                 │    game/       │                   │
+        │  │  Rust CLI │                 │  Browser Engine│                   │
+        │  │  (w3rs)   │                 │  (Canvas/WebGL)│                   │
+        │  │           │                 │                │                   │
+        │  │  • status │  chain-bridge   │  • Boss battles│                   │
+        │  │  • list   │◄───────────────►│  • HP = balance│                   │
+        │  │  • start  │   (JSON-RPC)    │  • Live events │                   │
+        │  │  • check  │                 │  • Pixel-art   │                   │
+        │  └───────────┘                 └────────────────┘                   │
+        │                                                                     │
+        │   ┌───────────────────────────────────────────────────────┐         │
+        │   │                     missions/*                        │         │
+        │   │                                                       │         │
+        │   │                                                       │         │
+        │   │                                                       │         │
+        │   └───────────────────────────────────────────────────────┘         │
+        └─────────────────────────────────────────────────────────────────────┘
 ```
 
 **Data flow:** You write exploit code → deploy to local chain via Foundry (`forge`) or Anchor → the CLI polls RPC endpoints → the game engine's `chain-bridge.js` translates contract state into boss HP, damage events, and victory conditions on the Canvas.
